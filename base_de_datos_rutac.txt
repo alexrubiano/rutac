@@ -1,0 +1,118 @@
+use rutac2;
+
+CREATE TABLE `departamento` (
+  `codigo_dep` int NOT NULL,
+  `nombre_dep` varchar(45) NOT NULL,
+  PRIMARY KEY (`codigo_dep`)
+); 
+
+CREATE TABLE `municipio` (
+  `codigo_mun` int NOT NULL,
+  `nombre_mun` varchar(45) NOT NULL,
+  `codigo_dep` int DEFAULT NULL,
+  PRIMARY KEY (`codigo_mun`),
+  KEY `fk_codigo_dep` (`codigo_dep`),
+  CONSTRAINT `fk_codigo_dep` FOREIGN KEY (`codigo_dep`) REFERENCES `departamento` (`codigo_dep`)
+);
+
+
+CREATE TABLE `tipo_preferencia` (
+  `ide_tipo_ref` int NOT NULL,
+  `nombre_tipo_ref` varchar(45) NOT NULL,
+  `descripcion_tipo_ref` varchar(120) NOT NULL,
+  PRIMARY KEY (`ide_tipo_ref`)
+);
+
+
+CREATE TABLE `usuario` (
+  `documento_usu` varchar(45) NOT NULL,
+  `login_usu` varchar(45) NOT NULL,
+  `email_usu` varchar(45) NOT NULL,
+  `tipo_identificacion_usu` varchar(45) NOT NULL,
+  `nombre_usu` varchar(45) NOT NULL,
+  `apellido_usu` varchar(45) NOT NULL,
+  `celular_usu` varchar(45) NOT NULL,
+  `codigo_mun` int DEFAULT NULL,
+  `genero_usu` varchar(45) NOT NULL,
+  `foto_usu` varchar(100) NOT NULL,
+  `estado_usu` int DEFAULT NULL,
+  `clave_usu` varchar(50) NOT NULL,
+  PRIMARY KEY (`documento_usu`),
+  KEY `fk_codigo_mun` (`codigo_mun`),
+  CONSTRAINT `fk_codigo_mun` FOREIGN KEY (`codigo_mun`) REFERENCES `municipio` (`codigo_mun`)
+);
+ 
+
+CREATE TABLE `preferencias` (
+  `codigo_pre` int NOT NULL,
+  `documento_usu` varchar(45) DEFAULT NULL,
+  `ide_tipo_ref` int DEFAULT NULL,
+  `estado_pre` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`codigo_pre`),
+  KEY `fk_ide_tipo_ref` (`ide_tipo_ref`),
+  KEY `fk_documento_usu2` (`documento_usu`),
+  CONSTRAINT `fk_documento_usu2` FOREIGN KEY (`documento_usu`) REFERENCES `usuario` (`documento_usu`),
+  CONSTRAINT `fk_ide_tipo_ref` FOREIGN KEY (`ide_tipo_ref`) REFERENCES `tipo_preferencia` (`ide_tipo_ref`)
+);
+
+CREATE TABLE `rol` (
+  `ide_rol` int NOT NULL,
+  `nombre_rol` varchar(45) NOT NULL,
+  PRIMARY KEY (`ide_rol`)
+);
+
+CREATE TABLE `rol_usuario` (
+  `ide_rol_usu` int NOT NULL,
+  `ide_rol` int DEFAULT NULL,
+  `documento_usu` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`ide_rol_usu`),
+  KEY `fk_ide_rol` (`ide_rol`),
+  KEY `fk_documento_usu` (`documento_usu`),
+  CONSTRAINT `fk_documento_usu` FOREIGN KEY (`documento_usu`) REFERENCES `usuario` (`documento_usu`),
+  CONSTRAINT `fk_ide_rol` FOREIGN KEY (`ide_rol`) REFERENCES `rol` (`ide_rol`)
+);
+
+
+
+CREATE TABLE `vehiculo` (
+  `codigo_veh` int NOT NULL,
+  `modelo_veh` varchar(45) NOT NULL,
+  `tipo_veh` varchar(45) NOT NULL,
+  `color_veh` varchar(45) NOT NULL,
+  `marca_veh` varchar(45) NOT NULL,
+  `placa_veh` varchar(45) NOT NULL,
+  `foto_veh` varchar(100) NOT NULL,
+  PRIMARY KEY (`codigo_veh`)
+);
+
+CREATE TABLE `ruta` (
+  `codigo_rut` int NOT NULL,
+  `nombre_conductor` varchar(100) DEFAULT NULL,
+  `codigo_veh` int DEFAULT NULL,
+  `estado_rut` int DEFAULT NULL,
+  `punto_partida` varchar(100) DEFAULT NULL,
+  `fecha_rut` date DEFAULT NULL,
+  `punto_destino` varchar(100) DEFAULT NULL,
+  `cupos_rut` int NOT NULL,
+  `indicacion_origen` varchar(100) NOT NULL,
+  `indicacion_llegada` varchar(100) NOT NULL,
+  `valor_cupo` int DEFAULT NULL,
+  `documento_usu` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`codigo_rut`),
+  KEY `fk_codigo_veh` (`codigo_veh`),
+  KEY `fk_documento_usu3` (`documento_usu`),
+  CONSTRAINT `fk_codigo_veh` FOREIGN KEY (`codigo_veh`) REFERENCES `vehiculo` (`codigo_veh`),
+  CONSTRAINT `fk_documento_usu3` FOREIGN KEY (`documento_usu`) REFERENCES `usuario` (`documento_usu`)
+); 
+
+insert into departamento(codigo_dep,nombre_dep) values('1','Atlántico');
+insert into departamento(codigo_dep,nombre_dep) values('2','Santander');
+insert into departamento(codigo_dep,nombre_dep) values('3','Cundinamarca');
+insert into municipio(codigo_mun,nombre_mun,codigo_dep) values('12','Barranquilla','1');
+insert into municipio(codigo_mun,nombre_mun,codigo_dep) values('13','Puerto Colombia','1');
+insert into municipio(codigo_mun,nombre_mun,codigo_dep) values('14','Soledad','1');
+insert into municipio(codigo_mun,nombre_mun,codigo_dep) values('15','Galapa','1');
+insert into vehiculo(codigo_veh,modelo_veh,tipo_veh,color_veh,marca_veh,placa_veh,foto_veh) values('1','2023','Automovil','Blanco','Renault','VVV349','foto');
+insert into vehiculo(codigo_veh,modelo_veh,tipo_veh,color_veh,marca_veh,placa_veh,foto_veh) values('2','2000','Minivan','Blanco','Kia','GTD458','foto');
+insert into usuario(documento_usu,login_usu,email_usu,tipo_identificacion_usu,nombre_usu,apellido_usu,celular_usu,codigo_mun,genero_usu,foto_usu,estado_usu,clave_usu) values('1026','1026','alexrubiano20@gmail.com','C.C','Alexander','Rubiano','3202845218','12','Masculino','foto','1','1234');
+ insert into ruta(codigo_rut,nombre_conductor,codigo_veh,estado_rut,punto_partida,fecha_rut,punto_destino,cupos_rut,indicacion_origen,indicacion_llegada,valor_cupo,documento_usu) values('12345','Andres','1','1','Terminal','2022-12-23','Bogota','3','Barranquilla','Bogota','200000','1026');
